@@ -1,11 +1,20 @@
 {
   "name": "lymph-bundler",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "an express middleware bundler",
   "main": "index.js",
+  "repository": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
   "author": "Erick Fleming",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "browserify": "^13.0.1",
+    "watchify": "^3.7.0"
+  },
+  "devDependencies": {
+    "express": "^4.13.4",
+    "request": "^2.72.0"
+  }
 }

@@ -1,5 +1,4 @@
 var browserify = require( "browserify" )
-var watchify = require( "watchify" )
 
 var logger = function( name )
 {
@@ -9,14 +8,14 @@ var logger = function( name )
   }
 }
 
-module.exports = function( file )
+exports.create = function( file )
 {
   var browserifyConfig =
     { debug: true
     , standalone: "Main"
     , cache: {}
     , packageCache: {}
-    , plugin: [ watchify ]
+    , plugin: []
     }
 
   var browserfier = browserify( browserifyConfig )
@@ -26,7 +25,7 @@ module.exports = function( file )
 
   return function( req, res )
   {
-    var respondToError = function( err )
+    var respondWithError = function( err )
     {
       console.log( err.message )
       res.status( 500 ).send( err.message )
@@ -37,7 +36,7 @@ module.exports = function( file )
 
     browserfier
       .bundle()
-      .on( "error" , respondToError )
+      .on( "error" , respondWithError )
       .pipe( res )
   }
 }

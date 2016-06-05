@@ -1,6 +1,6 @@
 var HTTP = require( "http" )
 var Express = require( "express" )
-var SuperAgent = require( "superagent" )
+var Request = require( 'request' )
 
 var Bundler = require( "./index" )
 
@@ -11,23 +11,27 @@ app.get( "/index.js", Bundler( "./index.js" ) )
 
 var server = HTTP.createServer( app )
 
+var logger = function( msg )
+{
+  return function()
+  {
+    console.log( '===' )
+    console.log( msg )
+  }
+}
+
 server.listen( 8081
   , function()
     {
-      console.log( 'tests started' )
-      console.log( '==' )
+      logger( 'start' )()
 
-      SuperAgent
-        .get( 'http://localhost:8081/index.js' )
-        .end(
-            function( err, res ) {
-              console.log( res.text )
-              server.close( function() {
-                console.log( '==' )
-                console.log( 'tests finished' )
-              } )
-            }
-          )
+      Request( 'http://localhost:8081/index.js'
+        , function( error, response, body )
+          {
+            console.log( body )
+            server.close( logger( 'done' ) )
+          }
+        )
     }
   )
 
