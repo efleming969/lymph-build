@@ -94,9 +94,9 @@ var copyStatics = function( config ) {
   } )
 }
 
-var isEnvironment = v => R.is( String, v) && v.startsWith( "env" )
+var isEnvironmentVar = v => R.is( String, v) && v.startsWith( "env" )
 
-var translateEnv = envs => s => isEnvironment( s )
+var translateEnv = envs => s => isEnvironmentVar( s )
   ? R.defaultTo( s, envs[ s.slice( 4 ) ] ) : s
 
 var preProcessTemplateData = envs => R.evolve(
@@ -120,23 +120,3 @@ exports.run = function( config ) {
     .then( buildStyle )
     .then( copyStatics )
 }
-
-// var deployAs = function( file ) {
-//   return function( buffer ) {
-//     var s3 = new AWS.S3()
-//
-//     var putParams = {
-//       Bucket: "braintrustgroup"
-//       , Key: file.name
-//       , ACL: "public-read"
-//       , ContentType: file.type
-//       , Body: buffer
-//     }
-//
-//     s3.putObject( putParams, function( err, data ) {
-//       console.log( err, data )
-//     } )
-//   }
-// }
-
-  // var deployAs = createDeployer( putObject )
