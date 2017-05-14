@@ -1,20 +1,40 @@
 {
-  "name": "lymph-bundler",
-  "version": "0.2.0",
-  "description": "an express middleware bundler",
+  "name": "lymph-build",
+  "version": "0.5.0",
+  "description": "a build system for lymph based applications",
   "main": "index.js",
   "repository": {},
+  "bin": {
+    "lymph-build": "./index.js"
+  },
   "scripts": {
-    "test": "node test.js"
+    "tests": "jest",
+    "tests-dev": "jest --watch",
+    "tests-build": "node index.js --src test-files/src --images test-files/images"
   },
   "author": "Erick Fleming",
   "license": "ISC",
   "dependencies": {
-    "browserify": "^13.0.1",
-    "watchify": "^3.7.0"
+    "args": "^3.0.1",
+    "browserify": "^14.3.0",
+    "mustache": "^2.3.0",
+    "fs-extra": "^3.0.1"
   },
   "devDependencies": {
-    "express": "^4.13.4",
-    "request": "^2.72.0"
+    "jest": "^20.0.1",
+    "ramda": "^0.23.0"
+  },
+  "jest": {
+    "rootDir": "src",
+    "testMatch": [
+      "**/*.tests.js"
+    ]
+  },
+  "lymph": {
+    "src": "./test-files/src",
+    "static": "./test-files/static",
+    "build": "./tmp/build",
+    "dependencies": [],
+    "templateData": {}
   }
 }
