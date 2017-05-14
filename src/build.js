@@ -96,11 +96,11 @@ var copyStatics = function( config ) {
 
 var isEnvironment = v => R.is( String, v) && v.startsWith( "env" )
 
-var translateEnv = s => isEnvironment( s )
-  ? R.defaultTo( s, process.env[ s.slice( 4 ) ] ) : s
+var translateEnv = envs => s => isEnvironment( s )
+  ? R.defaultTo( s, envs[ s.slice( 4 ) ] ) : s
 
-var preProcessTemplateData = R.evolve(
-  { templateData: R.map( translateEnv ) } )
+var preProcessTemplateData = envs => R.evolve(
+  { templateData: R.map( translateEnv( envs ) ) } )
 
 var resolvePaths = function( config ) {
   return R.merge( config, {
@@ -112,7 +112,7 @@ var resolvePaths = function( config ) {
 
 exports.run = function( config ) {
   return Promise.resolve( config )
-    .then( preProcessTemplateData )
+    .then( preProcessTemplateData( process.env ) )
     .then( resolvePaths )
     .then( buildScript )
     .then( buildDependencies )

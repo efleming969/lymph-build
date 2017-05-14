@@ -5,11 +5,13 @@ var Build = require( "./build" )
 
 describe( "building client app", function() {
 
+  process.env.LYMPH_VALID = "foobar"
+
   var config = {
     src: "test-files/src"
   , static: "test-files/static"
   , build: "tmp/build"
-  , templateData: { name1: "env.VALID",  name2: "env.INVALID" }
+  , templateData: { name1: "env.LYMPH_VALID",  name2: "env.LYMPH_INVALID" }
   , dependencies: [ "ramda" ]
   }
 
@@ -47,7 +49,6 @@ describe( "building client app", function() {
   } )
 
   test( "valid environment variables in template", function() {
-    process.env.VALID = "foobar"
     var html = FS.readFileSync(
       Path.join( config.build, "index.html" ), "utf8" )
     expect( html ).toMatch( /<title>foobar<\/title>/ )
@@ -56,6 +57,6 @@ describe( "building client app", function() {
   test( "invalid environment variables in template", function() {
     var html = FS.readFileSync(
       Path.join( config.build, "index.html" ), "utf8" )
-    expect( html ).toMatch( /<h1>env.INVALID<\/h1>/ )
+    expect( html ).toMatch( /<h1>env.LYMPH_INVALID<\/h1>/ )
   } )
 } )
