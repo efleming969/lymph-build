@@ -60,6 +60,6 @@ describe( "building the app", function() {
 
   test( "building zip file for each lambda service", function() {
     var services = FS.readdirSync( Path.join( config.build, "server" ) )
-    expect( services.length ).toBe( 2 )
+    expect( services ).toEqual( [ "buzz.zip", "fizz.zip" ] )
   } )
 } )
