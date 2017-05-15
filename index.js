@@ -10,10 +10,10 @@ var config = FS.readJsonSync( "./package.json" ).lymph
 
 var configDefault = {
     src: "src"
-  , static: "static"
   , build: "tmp/build"
   , templateData: {}
   , dependencies: []
+  , services: []
 }
 
 Build.run( R.merge( configDefault, config ) )

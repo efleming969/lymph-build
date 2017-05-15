@@ -3,16 +3,20 @@ var Path = require( "path" )
 
 var Build = require( "./build" )
 
-describe( "building client app", function() {
+describe( "building the app", function() {
 
   process.env.LYMPH_VALID = "foobar"
 
+  var readClientFile = function( name ) {
+    return FS.readFileSync( Path.join( "tmp", "build", "client", name ), "utf8" )
+  }
+
   var config = {
-    src: "test-files/src"
-  , static: "test-files/static"
+    src: "test-files"
   , build: "tmp/build"
   , templateData: { name1: "env.LYMPH_VALID",  name2: "env.LYMPH_INVALID" }
   , dependencies: [ "ramda" ]
+  , services: [ "fizz", "buzz" ]
   }
 
   beforeAll( function() {
@@ -24,39 +28,38 @@ describe( "building client app", function() {
   } )
 
   test( "main js file is created", function() {
-    var jsFile = FS.readFileSync( Path.join( config.build, "index.js" ) )
-    expect( jsFile ).toBeTruthy()
+    expect( readClientFile( "index.js" ) ).toBeTruthy()
   } )
 
   test( "dependencies js file is created", function() {
-    var jsFile = FS.readFileSync( Path.join( config.build, "deps.js" ) )
-    expect( jsFile ).toBeTruthy()
+    expect( readClientFile( "deps.js" ) ).toBeTruthy()
   } )
 
   test( "main html file is created", function() {
-    var htmlFile = FS.readFileSync( Path.join( config.build, "index.html" ) )
-    expect( htmlFile ).toBeTruthy()
+    expect( readClientFile( "index.html" ) ).toBeTruthy()
   } )
 
   test( "main css file is created", function() {
-    var cssFile = FS.readFileSync( Path.join( config.build, "index.html" ) )
-    expect( cssFile ).toBeTruthy()
+    expect( readClientFile( "index.css" ) ).toBeTruthy()
   } )
 
   test( "images files are copies", function() {
-    var images = FS.readdirSync( Path.join( config.build, "images" ) )
+    var images = FS.readdirSync( Path.join( config.build, "client", "images" ) )
     expect( images.length ).toBe( 3 )
   } )
 
   test( "valid environment variables in template", function() {
-    var html = FS.readFileSync(
-      Path.join( config.build, "index.html" ), "utf8" )
-    expect( html ).toMatch( /<title>foobar<\/title>/ )
+    expect( readClientFile( "index.html" ) )
+      .toMatch( /<title>foobar<\/title>/ )
   } )
 
   test( "invalid environment variables in template", function() {
-    var html = FS.readFileSync(
-      Path.join( config.build, "index.html" ), "utf8" )
-    expect( html ).toMatch( /<h1>env.LYMPH_INVALID<\/h1>/ )
+    expect( readClientFile( "index.html" ) )
+      .toMatch( /<h1>env.LYMPH_INVALID<\/h1>/ )
+  } )
+
+  test( "building zip file for each lambda service", function() {
+    var services = FS.readdirSync( Path.join( config.build, "server" ) )
+    expect( services.length ).toBe( 2 )
   } )
 } )

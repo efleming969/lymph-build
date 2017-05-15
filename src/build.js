@@ -3,10 +3,11 @@ var Path = require( "path" )
 var Browserify = require( "browserify" )
 var Mustache = require( "mustache" )
 var R = require( "ramda" )
+var Archiver = require( "archiver" )
 
 var buildScript = function( config ) {
-  var srcPath = Path.join( config.src, "index.js" )
-  var targetPath = Path.join( config.build, "index.js" )
+  var srcPath = Path.join( config.src, "client", "index.js" )
+  var targetPath = Path.join( config.build, "client", "index.js" )
 
   return new Promise( function( resolve, reject ) {
     Browserify( { bundleExternal: false } )
@@ -25,7 +26,7 @@ var buildScript = function( config ) {
 }
 
 var buildDependencies = function( config ) {
-  var targetPath = Path.join( config.build, "deps.js" )
+  var targetPath = Path.join( config.build, "client", "deps.js" )
 
   return new Promise( function( resolve, reject ) {
     Browserify()
@@ -44,8 +45,8 @@ var buildDependencies = function( config ) {
 }
 
 var buildTemplate = function( config ) {
-  var srcPath = Path.join( config.src, "index.html" )
-  var targetPath = Path.join( config.build, "index.html" )
+  var srcPath = Path.join( config.src, "client", "index.html" )
+  var targetPath = Path.join( config.build, "client", "index.html" )
 
   return new Promise( function( resolve, reject ) {
     FS.readFile( srcPath, "utf8", function( err, template ) {
@@ -64,8 +65,8 @@ var buildTemplate = function( config ) {
 }
 
 var buildStyle = function( config ) {
-  var srcPath = Path.join( config.src, "index.css" )
-  var targetPath = Path.join( config.build, "index.css" )
+  var srcPath = Path.join( config.src, "client", "index.css" )
+  var targetPath = Path.join( config.build, "client", "index.css" )
 
   return new Promise( function( resolve, reject ) {
     FS.readFile( srcPath, "utf8", function( err, style ) {
@@ -84,14 +85,76 @@ var buildStyle = function( config ) {
 }
 
 var copyStatics = function( config ) {
-  var srcPath = config.static
-  var targetPath = Path.join( config.build )
+  var srcPath = Path.join( config.src, "client", "static" )
+  var targetPath = Path.join( config.build, "client" )
 
   return new Promise( function( resolve, reject ) {
     FS.copy( srcPath, targetPath, function( err ) {
       err ? reject( err ) : resolve( config )
     } )
   } )
+}
+
+var buildService = function( service ) {
+  return new Promise( function( resolve, reject ) {
+    var browserifyOptions = {
+      standalone: "lambda"
+    , builtins: false
+    , commondir: false
+    , browserField: false
+    , insertGlobalVars: { process: function() { return; } }
+    }
+
+    Browserify( browserifyOptions )
+      .add( service.srcPath )
+      .bundle( function( err, bundleBuffer ) {
+        if ( err ) {
+          reject( err )
+        }
+        else {
+          zipService( service.targetPath, bundleBuffer, function( err ) {
+            err ? reject( err ) : resolve()
+          } )
+        }
+      } )
+  } )
+}
+
+var zipService = function( targetPath, bundleBuffer, callback ) {
+  var archive = Archiver( "zip" )
+  var buffers = []
+
+  archive.on( "error", function( err ) {
+    callback( err )
+  } )
+
+  archive.on( "data", function( buffer ) {
+    buffers.push( buffer )
+  } )
+
+  archive.on( "end", function() {
+    FS.outputFile( targetPath, Buffer.concat( buffers ), function( err ) {
+      callback( err )
+    } )
+  } )
+
+  // appending standard name and date inorder make sure zip file
+  // passes sha hashing checks
+  archive.append( bundleBuffer
+  , { name: "index.js", date: new Date( "01-01-2017 12:00:00" ) } )
+
+  archive.finalize()
+}
+
+var buildServices = function( config ) {
+  var services = config.services.map( function( name ) {
+    return buildService( {
+        srcPath: Path.join( config.src, "server", `${ name }.js` )
+      , targetPath: Path.join( config.build, "server", `${ name }.zip` )
+    } )
+  } )
+
+  return Promise.all( services )
 }
 
 var isEnvironmentVar = v => R.is( String, v) && v.startsWith( "env" )
@@ -105,7 +168,6 @@ var preProcessTemplateData = envs => R.evolve(
 var resolvePaths = function( config ) {
   return R.merge( config, {
       src: Path.resolve( config.src )
-    , static: Path.resolve( config.static )
     , build: Path.resolve( config.build )
   } )
 }
@@ -114,9 +176,10 @@ exports.run = function( config ) {
   return Promise.resolve( config )
     .then( preProcessTemplateData( process.env ) )
     .then( resolvePaths )
+    .then( copyStatics )
     .then( buildScript )
     .then( buildDependencies )
     .then( buildTemplate )
     .then( buildStyle )
-    .then( copyStatics )
+    .then( buildServices )
 }
