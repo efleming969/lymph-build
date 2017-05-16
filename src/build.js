@@ -22,13 +22,14 @@ var buildScript = function( config ) {
           reject( err )
         }
         else {
-
           var shortHash = createShortHash( buffer )
           var fileName = `index.${ shortHash }.js`
           var targetPath = Path.join( config.build, "client", fileName )
 
           FS.outputFile( targetPath, buffer, function( err ) {
-            err ? reject( err ) : resolve( config )
+            err
+              ? reject( err )
+              : resolve( R.merge( { scriptHash: shortHash }, config ) )
           } )
         }
       } )
@@ -49,7 +50,9 @@ var buildDependencies = function( config ) {
           var targetPath = Path.join( config.build, "client", fileName )
 
           FS.outputFile( targetPath, buffer, function( err ) {
-            err ? reject( err ) : resolve( config )
+            err
+              ? reject( err )
+              : resolve( R.merge( { depsHash: shortHash }, config ) )
           } )
         }
       } )
@@ -66,8 +69,14 @@ var buildTemplate = function( config ) {
         reject( err )
       }
       else {
+        var templateData = R.merge( {
+          scriptHash: config.scriptHash
+        , depsHash: config.depsHash
+        , styleHash: config.styleHash
+        }, config.templateData )
+
         FS.outputFile( targetPath
-        , Mustache.render( template, config.templateData )
+        , Mustache.render( template, templateData )
         , function( err ) {
             err ? reject( err ) : resolve( config )
           } )
@@ -90,7 +99,9 @@ var buildStyle = function( config ) {
         var targetPath = Path.join( config.build, "client", fileName )
 
         FS.outputFile( targetPath, buffer, function( err ) {
-          err ? reject( err ) : resolve( config )
+          err
+            ? reject( err )
+            : resolve( R.merge( { styleHash: shortHash }, config ) )
         } )
       }
     } )
@@ -190,9 +201,9 @@ exports.run = function( config ) {
     .then( preProcessTemplateData( process.env ) )
     .then( resolvePaths )
     .then( copyStatics )
-    .then( buildScript )
     .then( buildDependencies )
-    .then( buildTemplate )
+    .then( buildScript )
     .then( buildStyle )
+    .then( buildTemplate )
     .then( buildServices )
 }

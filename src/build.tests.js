@@ -58,6 +58,21 @@ describe( "building the app", function() {
       .toMatch( /<h1>env.LYMPH_INVALID<\/h1>/ )
   } )
 
+  test( "index.js hashed file name in template", function() {
+    expect( readClientFile( "index.html" ) )
+      .toMatch( /index\.fabEvHp4\.js/ )
+  } )
+
+  test( "index.js hashed file name in template", function() {
+    expect( readClientFile( "index.html" ) )
+      .toMatch( /deps\.WUnYAMPK\.js/ )
+  } )
+
+  test( "index.js hashed file name in template", function() {
+    expect( readClientFile( "index.html" ) )
+      .toMatch( /index\.v\+muL3DO\.css/ )
+  } )
+
   test( "building zip file for each lambda service", function() {
     var services = FS.readdirSync( Path.join( config.build, "server" ) )
     expect( services ).toEqual( [ "buzz.zip", "fizz.zip" ] )
