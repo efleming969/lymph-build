@@ -32,7 +32,7 @@ describe( "building the app", function() {
   } )
 
   test( "dependencies js file is created", function() {
-    expect( readClientFile( "deps.js" ) ).toBeTruthy()
+    expect( readClientFile( "deps.SaRSp0Am.js" ) ).toBeTruthy()
   } )
 
   test( "main html file is created", function() {

@@ -14,11 +14,9 @@ var createShortHash = function( buffer ) {
 }
 
 var buildScript = function( config ) {
-  var srcPath = Path.join( config.src, "client", "index.js" )
-
   return new Promise( function( resolve, reject ) {
     Browserify( { bundleExternal: false } )
-      .add( srcPath )
+      .add( Path.join( config.src, "client", "index.js" ) )
       .bundle( function( err, buffer ) {
         if ( err ) {
           reject( err )
@@ -38,8 +36,6 @@ var buildScript = function( config ) {
 }
 
 var buildDependencies = function( config ) {
-  var targetPath = Path.join( config.build, "client", "deps.js" )
-
   return new Promise( function( resolve, reject ) {
     Browserify()
       .require( config.dependencies )
@@ -48,6 +44,10 @@ var buildDependencies = function( config ) {
           reject( err )
         }
         else {
+          var shortHash = createShortHash( buffer )
+          var fileName = `deps.${ shortHash }.js`
+          var targetPath = Path.join( config.build, "client", fileName )
+
           FS.outputFile( targetPath, buffer, function( err ) {
             err ? reject( err ) : resolve( config )
           } )
