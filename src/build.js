@@ -4,10 +4,17 @@ var Browserify = require( "browserify" )
 var Mustache = require( "mustache" )
 var R = require( "ramda" )
 var Archiver = require( "archiver" )
+var Crypto = require( "crypto" )
+
+var createShortHash = function( buffer ) {
+  return Crypto.createHash( "sha256" )
+    .update( buffer )
+    .digest( "base64" )
+    .slice( 0,8 )
+}
 
 var buildScript = function( config ) {
   var srcPath = Path.join( config.src, "client", "index.js" )
-  var targetPath = Path.join( config.build, "client", "index.js" )
 
   return new Promise( function( resolve, reject ) {
     Browserify( { bundleExternal: false } )
@@ -17,6 +24,11 @@ var buildScript = function( config ) {
           reject( err )
         }
         else {
+
+          var shortHash = createShortHash( buffer )
+          var fileName = `index.${ shortHash }.js`
+          var targetPath = Path.join( config.build, "client", fileName )
+
           FS.outputFile( targetPath, buffer, function( err ) {
             err ? reject( err ) : resolve( config )
           } )

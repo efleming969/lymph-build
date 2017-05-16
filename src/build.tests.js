@@ -28,7 +28,7 @@ describe( "building the app", function() {
   } )
 
   test( "main js file is created", function() {
-    expect( readClientFile( "index.js" ) ).toBeTruthy()
+    expect( readClientFile( "index.fabEvHp4.js" ) ).toBeTruthy()
   } )
 
   test( "dependencies js file is created", function() {
