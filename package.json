@@ -34,7 +34,7 @@
   "lymph": {
     "src": "./test-files",
     "build": "./tmp/build",
-    "dependencies": [],
+    "dependencies": [ "ramda" ],
     "templateData": {
       "name1": "value1",
       "name2": "value2"

@@ -32,7 +32,7 @@ describe( "building the app", function() {
   } )
 
   test( "dependencies js file is created", function() {
-    expect( readClientFile( "deps.SaRSp0Am.js" ) ).toBeTruthy()
+    expect( readClientFile( "deps.WUnYAMPK.js" ) ).toBeTruthy()
   } )
 
   test( "main html file is created", function() {
@@ -40,7 +40,7 @@ describe( "building the app", function() {
   } )
 
   test( "main css file is created", function() {
-    expect( readClientFile( "index.css" ) ).toBeTruthy()
+    expect( readClientFile( "index.v+muL3DO.css" ) ).toBeTruthy()
   } )
 
   test( "images files are copies", function() {

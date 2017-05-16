@@ -78,19 +78,20 @@ var buildTemplate = function( config ) {
 
 var buildStyle = function( config ) {
   var srcPath = Path.join( config.src, "client", "index.css" )
-  var targetPath = Path.join( config.build, "client", "index.css" )
 
   return new Promise( function( resolve, reject ) {
-    FS.readFile( srcPath, "utf8", function( err, style ) {
+    FS.readFile( srcPath, function( err, buffer ) {
       if ( err ) {
         reject( err )
       }
       else {
-        FS.outputFile( targetPath
-        , style
-        , function( err ) {
-            err ? reject( err ) : resolve( config )
-          } )
+        var shortHash = createShortHash( buffer )
+        var fileName = `index.${ shortHash }.css`
+        var targetPath = Path.join( config.build, "client", fileName )
+
+        FS.outputFile( targetPath, buffer, function( err ) {
+          err ? reject( err ) : resolve( config )
+        } )
       }
     } )
   } )
