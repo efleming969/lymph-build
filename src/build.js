@@ -29,7 +29,7 @@ var buildScript = function( config ) {
           FS.outputFile( targetPath, buffer, function( err ) {
             err
               ? reject( err )
-              : resolve( R.merge( { scriptHash: shortHash }, config ) )
+              : resolve( R.merge( { scriptURL: fileName }, config ) )
           } )
         }
       } )
@@ -52,7 +52,7 @@ var buildDependencies = function( config ) {
           FS.outputFile( targetPath, buffer, function( err ) {
             err
               ? reject( err )
-              : resolve( R.merge( { depsHash: shortHash }, config ) )
+              : resolve( R.merge( { depsURL: fileName }, config ) )
           } )
         }
       } )
@@ -70,9 +70,9 @@ var buildTemplate = function( config ) {
       }
       else {
         var templateData = R.merge( {
-          scriptHash: config.scriptHash
-        , depsHash: config.depsHash
-        , styleHash: config.styleHash
+          scriptURL: config.scriptURL
+        , depsURL: config.depsURL
+        , styleURL: config.styleURL
         }, config.templateData )
 
         FS.outputFile( targetPath
@@ -101,7 +101,7 @@ var buildStyle = function( config ) {
         FS.outputFile( targetPath, buffer, function( err ) {
           err
             ? reject( err )
-            : resolve( R.merge( { styleHash: shortHash }, config ) )
+            : resolve( R.merge( { styleURL: fileName }, config ) )
         } )
       }
     } )

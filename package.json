@@ -37,7 +37,8 @@
     "dependencies": [ "ramda" ],
     "templateData": {
       "name1": "value1",
-      "name2": "value2"
+      "name2": "value2",
+      "baseURL": "http://localhost:8080/"
     },
     "services": [
       "fizz",
