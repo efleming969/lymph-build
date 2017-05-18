@@ -131,6 +131,7 @@ var buildService = function( service ) {
 
     Browserify( browserifyOptions )
       .add( service.srcPath )
+      .exclude( "aws-sdk" )
       .bundle( function( err, bundleBuffer ) {
         if ( err ) {
           reject( err )
