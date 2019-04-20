@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const FS = require( "fs" )
 const URL = require( "url" )
 const Path = require( "path" )
@@ -125,14 +127,16 @@ const staticServer = HTTP.createServer( function ( req, res ) {
 
 } )
 
-staticServer.listen( parseInt( port, 10 ) )
-
 const bundler = new Bundler()
 
-console.log( "watching", sourceDirectory )
+bundler.build( sourceDirectory, distDirectory ).then( function () {
+    staticServer.listen( parseInt( port, 10 ) )
 
-FS.watch( sourceDirectory, { recursive: true }, async function () {
-    await bundler.build( sourceDirectory, distDirectory )
+    console.log( "watching", sourceDirectory )
+
+    FS.watch( sourceDirectory, { recursive: true }, async function () {
+        await bundler.build( sourceDirectory, distDirectory )
+    } )
+
+    console.log( `Serving on http://localhost:${ port }` )
 } )
-
-console.log( `Serving on http://localhost:${ port }` )
