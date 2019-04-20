@@ -1,2 +1,4 @@
 node_modules
-tmp
+yarn.lock
+.idea/
+dist/
