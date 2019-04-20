@@ -64,4 +64,9 @@ describe( "building projects", function () {
         const indexResults = await compareFile( "scripts.js" )
         expect( indexResults.distContents ).toEqual( indexResults.expectedContents )
     } )
+
+    it( "bundles styles", async function () {
+        const results = await compareFile( "styles.css" )
+        expect( results.distContents ).toEqual( results.expectedContents )
+    } )
 } )

@@ -10,6 +10,22 @@ const rewriteAnchors = function ( html ) {
     } )
 }
 
+const bundleStyles = function ( sourceDirectoryPath, distDirectoryPath, html ) {
+    const re = /<link rel="stylesheet" href="(.*\.css)">/g
+    const matches = html.match( re )
+
+    if ( matches ) {
+        matches.forEach( async function ( styleTag ) {
+            const styleFileName = re.exec( styleTag )[ 1 ]
+
+            Shell.cp(
+                Path.join( sourceDirectoryPath, styleFileName ),
+                Path.join( distDirectoryPath, styleFileName ) )
+        } )
+    }
+
+    return html;
+}
 const bundleScripts = function ( sourceDirectoryPath, distDirectoryPath, html ) {
     const re = /<script src="(.*\.js)"><\/script>/g
     const matches = html.match( re )
@@ -59,6 +75,7 @@ module.exports = class Builder {
                     const html = Mustache.render( templateString, config )
                     const htmlWithRewrites = rewriteAnchors( html )
                     const htmlWithScripts = bundleScripts( sourceDirectoryPath, distDirectoryPath, htmlWithRewrites )
+                    const htmlWithStyles = bundleStyles( sourceDirectoryPath, distDirectoryPath, htmlWithRewrites )
                     const targetFileName = Path.basename( templatePath, ".mustache" ) + ".html"
                     const targetFile = Path.join( distDirectoryPath, targetFileName )
 
