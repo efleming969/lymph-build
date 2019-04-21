@@ -1,7 +1,6 @@
-import * as Utils from "./utils/index.js"
-
-const http = new Utils.HTTP( "http://localhost:8081" )
+import * as Foo from "./scripts/foo.js"
+import * as Bar from "./scripts/bar.js"
 
 document.addEventListener( "DOMContentLoaded", async function ( e ) {
-    console.log( http )
+    console.log( Foo.create(), Bar.create() )
 } )

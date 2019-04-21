@@ -39,14 +39,15 @@ const bundleScripts = function ( sourceDirectoryPath, distDirectoryPath, html ) 
                 input: Path.join( sourceDirectoryPath, scriptFileName )
             }
 
-            const namespaceName = "Acme" + scriptFileName.split( "/" ).map( function ( name ) {
-                return name.slice( 0, 1 ).toUpperCase() + name.slice( 1 )
-            } ).join( "" )
+            // const namespaceName = scriptFileName.split( "/" ).map( function ( name ) {
+            //     return name.slice( 0, 1 ).toUpperCase() + name.slice( 1 )
+            // } ).join( "" )
+            const namespace = "ScriptsShared"
 
             const outputOptions = {
                 file: Path.join( distDirectoryPath, scriptFileName ),
                 format: "iife",
-                name: Path.basename( namespaceName, ".js" )
+                name: Path.basename( namespace, ".js" )
             }
 
             const bundle = await Rollup.rollup( inputOptions )
@@ -75,11 +76,11 @@ module.exports = class Builder {
                     const html = Mustache.render( templateString, config )
                     const htmlWithRewrites = rewriteAnchors( html )
                     const htmlWithScripts = bundleScripts( sourceDirectoryPath, distDirectoryPath, htmlWithRewrites )
-                    const htmlWithStyles = bundleStyles( sourceDirectoryPath, distDirectoryPath, htmlWithRewrites )
+                    const htmlWithStyles = bundleStyles( sourceDirectoryPath, distDirectoryPath, htmlWithScripts )
                     const targetFileName = Path.basename( templatePath, ".mustache" ) + ".html"
                     const targetFile = Path.join( distDirectoryPath, targetFileName )
 
-                    FS.writeFile( targetFile, htmlWithScripts, "utf8", function ( error ) {
+                    FS.writeFile( targetFile, htmlWithStyles, "utf8", function ( error ) {
                         if ( !error )
                             resolve( targetFile )
                         else

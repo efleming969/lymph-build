@@ -1,6 +1,5 @@
 const Path = require( "path" )
 const FS = require( "fs" )
-const Shell = require( "shelljs" )
 
 const Builder = require( "../main/bundler" )
 
@@ -58,7 +57,7 @@ describe( "building projects", function () {
         const scriptsResults = await compareFile( "scripts.html" )
         expect( scriptsResults.distContents ).toEqual( scriptsResults.expectedContents )
 
-        const utilsResults = await compareFile( "utils/index.js" )
+        const utilsResults = await compareFile( "scripts-shared.js" )
         expect( utilsResults.distContents ).toEqual( utilsResults.expectedContents )
 
         const indexResults = await compareFile( "scripts.js" )

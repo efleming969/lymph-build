@@ -1,22 +1,16 @@
 (function () {
     'use strict';
 
-    class HTTP {
+    const create = function () {
+        return "foo"
+    };
 
-        constructor( baseUrl ) {
-            this.baseUrl = baseUrl;
-        }
-
-        get( url ) {
-            return fetch( this.baseUrl + url )
-                .then( response => response.json() )
-        }
-    }
-
-    const http = new HTTP( "http://localhost:8081" );
+    const create$1 = function () {
+        return "bar"
+    };
 
     document.addEventListener( "DOMContentLoaded", async function ( e ) {
-        console.log( http );
+        console.log( create(), create$1() );
     } );
 
 }());
