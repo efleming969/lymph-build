@@ -41,7 +41,8 @@ const mime = Object.entries( types ).reduce( function ( all, [ type, exts ] ) {
 const cwd = process.cwd()
 const sourceDirectory = Path.join( cwd, process.argv[ 2 ] || "src" )
 const distDirectory = Path.join( cwd, process.argv[ 3 ] || "dist" )
-const port = process.argv[ 4 ] || 8080
+const proxyPath = process.argv[ 4 ] || "api.localhost:8080"
+const port = process.argv[ 5 ] || 8080
 
 const sendError = function ( res, status ) {
     res.writeHead( status )
@@ -105,10 +106,25 @@ const staticServer = HTTP.createServer( function ( req, res ) {
     const decodedPathName = decodeURI( URL.parse( req.url ).pathname )
     const extension = decodedPathName.replace( /^.*[\.\/\\]/, "" ).toLowerCase()
     const uri = Path.join( distDirectory, decodedPathName )
+    const url = URL.parse( `http://${ req.headers.host }${ decodedPathName }` )
 
-    console.log( "requested", decodedPathName )
+    if ( url.hostname.startsWith( "api." ) ) {
+        const proxyOptions = {
+            host: url.hostname,
+            port: 8081,
+            path: url.pathname,
+            method: req.method,
+            headers: req.headers
+        }
 
-    if ( extension === "html" ) {
+        const proxy = HTTP.request( proxyOptions, function ( proxyResponse ) {
+            res.writeHead( proxyResponse.statusCode, proxyResponse.headers )
+
+            proxyResponse.pipe( res, { end: true } )
+        } )
+
+        req.pipe( proxy, { end: true } )
+    } else if ( extension === "html" ) {
         FS.readFile( uri, "utf8", function ( error, template ) {
             if ( error ) sendErrorHtml( res, error )
             else sendHtml( res, template )
@@ -138,5 +154,8 @@ bundler.build( sourceDirectory, distDirectory ).then( function () {
         await bundler.build( sourceDirectory, distDirectory )
     } )
 
-    console.log( `Serving on http://localhost:${ port }` )
+    console.log( `
+    Serving
+    on
+    http://localhost:${ port }` )
 } )
