@@ -105,7 +105,10 @@ const staticServer = HTTP.createServer( function ( req, res ) {
     const decodedPathName = decodeURI( URL.parse( req.url ).pathname )
     const extension = decodedPathName.replace( /^.*[\.\/\\]/, "" ).toLowerCase()
     const uri = Path.join( distDirectory, decodedPathName )
-    const url = URL.parse( `http://${ req.headers.host }${ decodedPathName }` )
+    const urlString = `http://${ req.headers.host }${ decodedPathName }`
+    const url = URL.parse( urlString )
+
+    console.log( `handling: ${ urlString }` )
 
     if ( url.hostname.startsWith( "api." ) ) {
         const proxyOptions = {
@@ -116,7 +119,8 @@ const staticServer = HTTP.createServer( function ( req, res ) {
             headers: req.headers
         }
 
-        console.log( `forwarding to ${ url.hostname }:8081${ url.pathname }` )
+        console.log( `forwarding to: ${ url.hostname }:8081${ url.pathname }`
+        )
 
         const proxy = HTTP.request( proxyOptions, function ( proxyResponse ) {
             res.writeHead( proxyResponse.statusCode, proxyResponse.headers )
