@@ -110,17 +110,18 @@ const staticServer = HTTP.createServer( function ( req, res ) {
 
     console.log( `handling: ${ urlString }` )
 
-    if ( url.hostname.startsWith( "api." ) ) {
+    if ( decodedPathName.startsWith( "/api" ) ) {
+        const path = decodedPathName.replace( "/api", "" )
+
         const proxyOptions = {
             host: url.hostname,
             port: 8081,
-            path: url.pathname,
+            path,
             method: req.method,
             headers: req.headers
         }
 
-        console.log( `forwarding to: ${ url.hostname }:8081${ url.pathname }`
-        )
+        console.log( `forwarding to: http://${ url.hostname }:8081${ path }` )
 
         const proxy = HTTP.request( proxyOptions, function ( proxyResponse ) {
             res.writeHead( proxyResponse.statusCode, proxyResponse.headers )

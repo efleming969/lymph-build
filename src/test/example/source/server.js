@@ -19,7 +19,7 @@ const createOptions = function ( method, data, token ) {
 document.getElementById( "set-data" ).addEventListener( "click", function ( e ) {
     const options = createOptions( "POST", { name: "foo" } )
 
-    fetch( "http://api.localhost:8080/erick/sessions", options )
+    fetch( "http://localhost:8080/api/erick/sessions", options )
         .then( x => x.json() )
         .then( function ( data ) {
             console.log( data )
@@ -29,7 +29,7 @@ document.getElementById( "set-data" ).addEventListener( "click", function ( e ) 
 document.getElementById( "get-data" ).addEventListener( "click", function ( e ) {
     const options = createOptions( "GET" )
 
-    fetch( "http://api.localhost:8080/erick/sessions", options )
+    fetch( "http://localhost:8080/api/erick/sessions", options )
         .then( x => x.json() )
         .then( function ( data ) {
             console.log( data )
