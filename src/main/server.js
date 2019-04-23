@@ -41,7 +41,6 @@ const mime = Object.entries( types ).reduce( function ( all, [ type, exts ] ) {
 const cwd = process.cwd()
 const sourceDirectory = Path.join( cwd, process.argv[ 2 ] || "src" )
 const distDirectory = Path.join( cwd, process.argv[ 3 ] || "dist" )
-const proxyPath = process.argv[ 4 ] || "api.localhost:8080"
 const port = process.argv[ 5 ] || 8080
 
 const sendError = function ( res, status ) {
@@ -117,6 +116,8 @@ const staticServer = HTTP.createServer( function ( req, res ) {
             headers: req.headers
         }
 
+        console.log( `forwarding to ${ url.hostname }:8081${ url.pathname }` )
+
         const proxy = HTTP.request( proxyOptions, function ( proxyResponse ) {
             res.writeHead( proxyResponse.statusCode, proxyResponse.headers )
 
@@ -154,8 +155,5 @@ bundler.build( sourceDirectory, distDirectory ).then( function () {
         await bundler.build( sourceDirectory, distDirectory )
     } )
 
-    console.log( `
-    Serving
-    on
-    http://localhost:${ port }` )
+    console.log( `Serving on http://localhost:${ port }` )
 } )
