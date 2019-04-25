@@ -107,6 +107,7 @@ exports.start = function ( config = {} ) {
         const uri = Path.join( distDirectory, decodedPathName )
         const urlString = `http://${ req.headers.host }${ decodedPathName }`
         const url = URL.parse( urlString )
+        const proxyPort = config.proxyPort
 
         console.log( `handling: ${ urlString }` )
 
@@ -115,13 +116,13 @@ exports.start = function ( config = {} ) {
 
             const proxyOptions = {
                 host: url.hostname,
-                port: 8081,
+                port: config.proxyPort,
                 path,
                 method: req.method,
                 headers: req.headers
             }
 
-            console.log( `forwarding to: http://${ url.hostname }:8081${ path }` )
+            console.log( `forwarding to: http://${ url.hostname }:${ config.proxyPort }${ path }` )
 
             const proxy = HTTP.request( proxyOptions, function ( proxyResponse ) {
                 res.writeHead( proxyResponse.statusCode, proxyResponse.headers )
@@ -131,15 +132,15 @@ exports.start = function ( config = {} ) {
 
             req.pipe( proxy, { end: true } )
         } else if ( extension === "html" ) {
-            FS.readFile( uri, "utf8", function ( error, template ) {
+            FS.readFile( uri.replace( context, "" ), "utf8", function ( error, template ) {
                 if ( error ) sendErrorHtml( res, error )
                 else sendHtml( res, template )
             } )
         } else {
-            FS.stat( uri, function ( error ) {
+            FS.stat( uri.replace( context, "" ), function ( error ) {
                 if ( error ) return sendError( res, 404 )
 
-                FS.readFile( uri, "binary", function ( error, file ) {
+                FS.readFile( uri.replace( context, "" ), "binary", function ( error, file ) {
                     if ( error ) return sendError( res, 500 )
 
                     sendFile( res, 200, file, extension )
