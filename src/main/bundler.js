@@ -59,8 +59,6 @@ const bundleScripts = function ( sourceDirectoryPath, distDirectoryPath, html ) 
 module.exports = class Builder {
 
     async build( sourceDirectoryPath, distDirectoryPath ) {
-        Shell.mkdir( "-p", distDirectoryPath )
-
         const templatePaths = Shell.ls( Path.join( sourceDirectoryPath, "*.mustache" ) )
 
         return Promise.all( templatePaths.map( function ( templatePath ) {

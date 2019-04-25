@@ -3,6 +3,7 @@ const FS = require( "fs" )
 const URL = require( "url" )
 const Path = require( "path" )
 const HTTP = require( "http" )
+const Shell = require( "shelljs" )
 
 const Bundler = require( "./bundler" )
 
@@ -135,6 +136,8 @@ const staticServer = HTTP.createServer( function ( req, res ) {
 } )
 
 const bundler = new Bundler()
+
+Shell.mkdir( "-p", distDirectory )
 
 bundler.build( sourceDirectory, distDirectory ).then( function () {
     staticServer.listen( parseInt( port, 10 ) )
