@@ -1,14 +1,11 @@
 {
   "name": "lymph-build",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "main": "./src/main/server.js",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/efleming969/lymph-build.git"
-  },
-  "bin": {
-    "lymph-build": "./src/main/server.js"
   },
   "dependencies": {
     "mustache": "^3",

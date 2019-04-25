@@ -39,9 +39,6 @@ const bundleScripts = function ( sourceDirectoryPath, distDirectoryPath, html ) 
                 input: Path.join( sourceDirectoryPath, scriptFileName )
             }
 
-            // const namespaceName = scriptFileName.split( "/" ).map( function ( name ) {
-            //     return name.slice( 0, 1 ).toUpperCase() + name.slice( 1 )
-            // } ).join( "" )
             const namespace = "ScriptsShared"
 
             const outputOptions = {
@@ -91,22 +88,3 @@ module.exports = class Builder {
         } ) )
     }
 }
-
-// build( "index.mustache" )
-
-// templates.forEach( function ( templatePath ) {
-//     FS.readFile( templatePath, "utf8", function ( error, templateString ) {
-//         if ( error ) {
-//             console.log( error )
-//         } else {
-//             const html = Mustache.render( templateString, config )
-//             const targetFile = Path.join( cwd, "dist", Path.basename( templatePath ) )
-//             FS.writeFile( targetFile, html, "utf8", function ( error ) {
-//                 if ( error ) {
-//                     console.log( error )
-//                 }
-//             } )
-//         }
-//     } )
-// } )
-
