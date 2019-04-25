@@ -63,8 +63,6 @@ module.exports = class Builder {
 
         const templatePaths = Shell.ls( Path.join( sourceDirectoryPath, "*.mustache" ) )
 
-        console.log( "building", sourceDirectoryPath )
-
         return Promise.all( templatePaths.map( function ( templatePath ) {
             return new Promise( function ( resolve, reject ) {
                 const config = require( Path.join( sourceDirectoryPath, "data.js" ) )
