@@ -107,31 +107,10 @@ exports.start = function ( config = {} ) {
         const uri = Path.join( distDirectory, decodedPathName )
         const urlString = `http://${ req.headers.host }${ decodedPathName }`
         const url = URL.parse( urlString )
-        const proxyPort = config.proxyPort
 
         console.log( `handling: ${ urlString }` )
 
-        if ( decodedPathName.startsWith( "/api" ) ) {
-            const path = decodedPathName.replace( "/api", "" )
-
-            const proxyOptions = {
-                host: url.hostname,
-                port: config.proxyPort,
-                path,
-                method: req.method,
-                headers: req.headers
-            }
-
-            console.log( `forwarding to: http://${ url.hostname }:${ config.proxyPort }${ path }` )
-
-            const proxy = HTTP.request( proxyOptions, function ( proxyResponse ) {
-                res.writeHead( proxyResponse.statusCode, proxyResponse.headers )
-
-                proxyResponse.pipe( res, { end: true } )
-            } )
-
-            req.pipe( proxy, { end: true } )
-        } else if ( extension === "html" ) {
+        if ( extension === "html" ) {
             FS.readFile( uri.replace( context, "" ), "utf8", function ( error, template ) {
                 if ( error ) sendErrorHtml( res, error )
                 else sendHtml( res, template )
