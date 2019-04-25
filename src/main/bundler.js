@@ -17,6 +17,9 @@ const bundleStyles = function ( sourceDirectoryPath, distDirectoryPath, html ) {
     if ( matches ) {
         matches.forEach( async function ( styleTag ) {
             const styleFileName = re.exec( styleTag )[ 1 ]
+            const styleDirectory = Path.dirname( distDirectoryPath + "/" + styleFileName )
+
+            Shell.mkdir( "-p", styleDirectory )
 
             Shell.cp(
                 Path.join( sourceDirectoryPath, styleFileName ),

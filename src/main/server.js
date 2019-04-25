@@ -105,8 +105,6 @@ const reloadServer = HTTP.createServer( function ( request, res ) {
     } )
 } )
 
-reloadServer.listen( 5000 )
-
 const staticServer = HTTP.createServer( function ( req, res ) {
     const decodedPathName = decodeURI( URL.parse( req.url ).pathname )
     const extension = decodedPathName.replace( /^.*[\.\/\\]/, "" ).toLowerCase()
@@ -137,9 +135,10 @@ const staticServer = HTTP.createServer( function ( req, res ) {
 
 const bundler = new Bundler()
 
-Shell.mkdir( "-p", distDirectory )
-
 bundler.build( sourceDirectory, distDirectory ).then( function () {
+    Shell.mkdir( "-p", distDirectory )
+
+    reloadServer.listen( 5000 )
     staticServer.listen( parseInt( port, 10 ) )
 
     FS.watch( sourceDirectory, { recursive: true }, async function () {
