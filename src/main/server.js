@@ -108,22 +108,22 @@ const reloadServer = HTTP.createServer( function ( request, res ) {
 const staticServer = HTTP.createServer( function ( req, res ) {
     const decodedPathName = decodeURI( URL.parse( req.url ).pathname )
     const extension = decodedPathName.replace( /^.*[\.\/\\]/, "" ).toLowerCase()
-    const uri = Path.join( distDirectory, decodedPathName )
+    const uri = Path.join( distDirectory, decodedPathName.replace( context, "" ) )
     const urlString = `http://${ req.headers.host }${ decodedPathName }`
     const url = URL.parse( urlString )
 
-    console.log( `handling: ${ urlString }` )
+    console.log( `handling: ${ uri }` )
 
     if ( extension === "html" ) {
-        FS.readFile( uri.replace( context, "" ), "utf8", function ( error, template ) {
+        FS.readFile( uri, "utf8", function ( error, template ) {
             if ( error ) sendErrorHtml( res, error )
             else sendHtml( res, template )
         } )
     } else {
-        FS.stat( uri.replace( context, "" ), function ( error ) {
+        FS.stat( uri, function ( error ) {
             if ( error ) return sendError( res, 404 )
 
-            FS.readFile( uri.replace( context, "" ), "binary", function ( error, file ) {
+            FS.readFile( uri, "binary", function ( error, file ) {
                 if ( error ) return sendError( res, 500 )
 
                 sendFile( res, 200, file, extension )

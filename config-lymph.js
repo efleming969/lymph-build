@@ -1,6 +1,6 @@
 module.exports = {
     src: "./src/test/example/source",
     dist: "./dist",
-    context: "/erick",
+    context: "/foobar",
     port: 8080
 }
